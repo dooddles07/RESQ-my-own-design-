@@ -11,19 +11,42 @@ const Register = () => {
   const [contactNumber, setContactNumber] = useState('');
   const router = useRouter();
 
-  const handleRegister = () => {
-    // Navigate to the login screen after registration
-    router.replace('./LoginScreen');
+  const handleRegister = async () => {
+    try {
+      const res = await fetch('http://192.168.100.134:10000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullname,
+          email,
+          username,
+          password,
+          contactNumber,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Registered successfully!');
+        router.replace('./LoginScreen');
+      } else {
+        alert(data.message || 'Registration failed.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong.');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="purple" />
       </TouchableOpacity>
 
-      {/* Form */}
       <View style={styles.formContainer}>
         <Text style={styles.title}>Create an Account</Text>
         <Text style={styles.subtitle}>Sign up to continue</Text>
@@ -84,7 +107,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 10,
-    marginTop: 20, // Add a little margin on top
+    marginTop: 20,
   },
   formContainer: {
     width: '100%',
