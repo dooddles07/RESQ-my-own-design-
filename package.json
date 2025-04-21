@@ -11,7 +11,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "dev": "nodemon server.js"
+    "dev": "nodemon backend/server.js"
   },
   "jest": {
     "preset": "jest-expo"
