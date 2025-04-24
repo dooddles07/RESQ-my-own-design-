@@ -1,30 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import * as Location from "expo-location";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
-  const [username, setUsername] = useState("User"); // Default username
+  const [username, setUsername] = useState("username"); 
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const router = useRouter(); // Use the router for navigation
+  const router = useRouter();
 
-  const handleLogout = () => {
-    // Navigate to the login screen
-    router.replace("/LoginScreen");
+  useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem("username");
+        if (storedUsername) {
+          setUsername(storedUsername);
+        }
+      } catch (error) {
+        console.error("Failed to retrieve username:", error);
+      }
+    };
+
+    fetchUsername();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("username");
+      router.replace("/LoginScreen");
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
   };
 
-  const handleSOS = () => {
-    Alert.alert("SOS Activated!", "Help is on the way.");
-  };
+ const handleSOS = async () => {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    Alert.alert("Permission Denied", "Location permission is required to send SOS.");
+    return;
+  }
 
-  const handleTrackMe = () => {
-    Alert.alert("Tracking Enabled", "Your location is being shared.");
-  };
+  try {
+    const location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords;
 
-  const handleTalkToCouncil = () => {
-    Alert.alert("Connecting...", "Redirecting to Women's Council.");
-  };
+    console.log("Sending SOS request:", { username, latitude, longitude });
+
+    const response = await axios.post("http://192.168.100.184:10000/api/sos/send", {
+      username, // Use the state variable directly
+      latitude,
+      longitude,
+    });
+
+    console.log("SOS response:", response.data);
+    Alert.alert("SOS Enabled", "Your location was sent successfully.");
+  } catch (error) {
+    console.error(
+      axios.isAxiosError(error) ? error.response?.data || error.message : error
+    );
+    Alert.alert("Error", "Failed to send location.");
+  }
+};
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
