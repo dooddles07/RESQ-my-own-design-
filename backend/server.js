@@ -3,7 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import authRouter from './routers/authRouter.js';
-import sosRouter from './routers/sosRoutes.js'; // Import the SOS router
+import sosRouter from './routers/sosRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -14,16 +14,18 @@ app.use(express.json());
 
 const corsOptions = {
   origin: (origin, callback) => {
-    const allowedOrigins = ['http://192.168.100.184:8081', 'http://192.168.100.184:10000'];
-    if (allowedOrigins.includes(origin) || !origin) {
+    const allowedOrigins = [
+      'http://192.168.100.134:8081',
+      'http://192.168.100.134:10000',
+      'http://localhost:3000', // local frontend test
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
 };
-
-
 
 app.use(cors(corsOptions));
 
@@ -34,9 +36,9 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 app.use('/api/auth', authRouter);
-app.use('/api/sos', cors(), sosRouter);
+app.use('/api/sos', sosRouter);
 
-// Error handling middleware
+// Error handler
 app.use(errorHandler);
 
 // Start server

@@ -36,34 +36,42 @@ const Home = () => {
     }
   };
 
- const handleSOS = async () => {
-  const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== "granted") {
-    Alert.alert("Permission Denied", "Location permission is required to send SOS.");
-    return;
-  }
+  const handleSOS = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Denied", "Location permission is required to send SOS.");
+      return;
+    }
 
-  try {
-    const location = await Location.getCurrentPositionAsync({});
-    const { latitude, longitude } = location.coords;
+    try {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+      });
 
-    console.log("Sending SOS request:", { username, latitude, longitude });
+      if (!location || !location.coords) {
+        Alert.alert("Error", "Failed to retrieve location.");
+        return;
+      }
 
-    const response = await axios.post("http://192.168.100.184:10000/api/sos/send", {
-      username, // Use the state variable directly
-      latitude,
-      longitude,
-    });
+      const { latitude, longitude } = location.coords;
 
-    console.log("SOS response:", response.data);
-    Alert.alert("SOS Enabled", "Your location was sent successfully.");
-  } catch (error) {
-    console.error(
-      axios.isAxiosError(error) ? error.response?.data || error.message : error
-    );
-    Alert.alert("Error", "Failed to send location.");
-  }
-};
+      console.log("Sending SOS request:", { username, latitude, longitude });
+
+      const response = await axios.post("http://192.168.100.134:10000/api/sos/send", {
+        username,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+      });
+
+      console.log("SOS response:", response.data);
+      Alert.alert("SOS Enabled", "Your location was sent successfully.");
+    } catch (error) {
+      console.error(
+        axios.isAxiosError(error) ? error.response?.data || error.message : error
+      );
+      Alert.alert("Error", "Failed to send location.");
+    }
+  };
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
@@ -124,11 +132,7 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "space-between",
-  },
+  container: { flex: 1, padding: 20, justifyContent: "space-between" },
   userContainer: {
     alignSelf: "flex-start",
     backgroundColor: "#b68def",
@@ -142,14 +146,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
   },
-  userText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
-  userButton: {
-    padding: 2,
-  },
+  userText: { fontSize: 18, fontWeight: "bold", color: "#ffffff" },
+  userButton: { padding: 2 },
   dropdownContainer: {
     position: "absolute",
     top: 70,
@@ -170,16 +168,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 5,
   },
-  logoutText: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: "#000000",
-    marginLeft: 10,
-  },
-  sosContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  logoutText: { fontSize: 15, fontWeight: "bold", color: "#000000", marginLeft: 10 },
+  sosContainer: { alignItems: "center", justifyContent: "center" },
   sosButton: {
     backgroundColor: "#b68def",
     width: 200,
@@ -194,11 +184,7 @@ const styles = StyleSheet.create({
     elevation: 6,
     marginTop: 10,
   },
-  sosText: {
-    fontSize: 75,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
+  sosText: { fontSize: 75, fontWeight: "bold", color: "#ffffff" },
   topBottomContainer: {
     backgroundColor: "#eddff7",
     padding: 20,
@@ -212,11 +198,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: "center",
   },
-  topBottomText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
+  topBottomText: { fontSize: 16, fontWeight: "bold", color: "#333" },
   bottomContainer: {
     backgroundColor: "#eddff7",
     padding: 10,
@@ -234,10 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
   },
-  actionButton: {
-    alignItems: "center",
-    paddingVertical: 5,
-  },
+  actionButton: { alignItems: "center", paddingVertical: 5 },
   iconContainer: {
     backgroundColor: "#b68def",
     padding: 10,
@@ -245,12 +224,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  actionText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 2,
-  },
+  actionText: { fontSize: 12, fontWeight: "bold", color: "#333", marginTop: 2 },
 });
 
 export default Home;

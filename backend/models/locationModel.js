@@ -7,6 +7,9 @@ const locationSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
+locationSchema.index({ username: 1 });
+locationSchema.index({ timestamp: -1 });
+
 const Location = mongoose.model('Location', locationSchema);
 
 export default Location;
