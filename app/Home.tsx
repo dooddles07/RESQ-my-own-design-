@@ -1,3 +1,4 @@
+// Home.tsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -7,6 +8,7 @@ import {
   StyleSheet,
   Animated,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,6 +16,8 @@ import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const { width } = Dimensions.get("window");
 
 const Home = () => {
   const [username, setUsername] = useState("Loading...");
@@ -40,7 +44,7 @@ const Home = () => {
 
   const startPulseAnimation = () => {
     animationRef.current = Animated.loop(
-      Animated.sequence([
+      Animated.sequence([  
         Animated.timing(scaleAnim, {
           toValue: 1.2,
           duration: 600,
@@ -65,14 +69,12 @@ const Home = () => {
 
   const handleSOS = async () => {
     if (sosActive) {
-      // Turn OFF SOS
       stopPulseAnimation();
       setSosActive(false);
       Alert.alert("SOS Disabled", "You have turned off the SOS.");
       return;
     }
 
-    // Turn ON SOS
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission Denied", "Location permission is required to send SOS.");
@@ -114,19 +116,20 @@ const Home = () => {
   const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
 
   return (
-    <LinearGradient colors={["#ffffff", "#ffffff"]} style={styles.container}>
+    <LinearGradient colors={["#defcf9", "#cadefc", "#c3bef0", "#cca8e9"]} style={styles.container}>
       <View style={{ flex: 1 }}>
         {/* Header */}
-        <View style={styles.userContainer}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Welcome, {username}</Text>
           <TouchableOpacity onPress={toggleDropdown} style={styles.hamburgerButton}>
-            <Ionicons name="menu-outline" size={24} color="#fff" />
+            <Ionicons name="menu-outline" size={30} color="#fff" />
           </TouchableOpacity>
+        </View>
 
-          {dropdownVisible && (
+        {/* Dropdown */}
+        {dropdownVisible && (
+          <View style={styles.dropdownOverlay}>
             <View style={styles.dropdownContainer}>
-              <TouchableOpacity style={styles.dropdownItem}>
-                <Text style={styles.dropdownText}>Hello, {username}</Text>
-              </TouchableOpacity>
               <TouchableOpacity onPress={() => router.push("/Users")} style={styles.dropdownItem}>
                 <Text style={styles.dropdownText}>Users</Text>
               </TouchableOpacity>
@@ -136,26 +139,29 @@ const Home = () => {
               <TouchableOpacity onPress={() => router.push("/Privacy")} style={styles.dropdownItem}>
                 <Text style={styles.dropdownText}>Privacy</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={async () => {
-                await AsyncStorage.removeItem("username");
-                setUsername("Guest");
-                router.replace("/");
-              }} style={[styles.dropdownItem, styles.logoutButton]}>
+              <TouchableOpacity
+                onPress={async () => {
+                  await AsyncStorage.removeItem("username");
+                  setUsername("Guest");
+                  router.replace("/");
+                }}
+                style={[styles.dropdownItem, styles.logoutButton]}
+              >
                 <Text style={[styles.dropdownText, styles.logoutText]}>Logout</Text>
               </TouchableOpacity>
             </View>
-          )}
-        </View>
+          </View>
+        )}
 
         {/* SOS Button */}
         <View style={styles.sosContainer}>
           <Animated.View
-            style={[
-              styles.sosButton,
-              {
+            style={[ 
+              styles.sosButton, 
+              { 
                 transform: [{ scale: scaleAnim }],
                 backgroundColor: sosActive ? "#ff3b3b" : "#8c01c0",
-              },
+              }
             ]}
           >
             <TouchableOpacity
@@ -208,49 +214,52 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "space-between",
   },
-  userContainer: {
-    alignSelf: "flex-end",
-    backgroundColor: "#8c01c0",
-    padding: 20,
-    borderRadius: 30,
-    marginBottom: 20,
-    width: "100%",
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    position: "relative",
+    justifyContent: "space-between",
+    backgroundColor: "#8c01c0",
+    padding: 15,
+    borderRadius: 20,
+  },
+  headerText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   hamburgerButton: {
-    marginLeft: "auto",
     padding: 5,
   },
-  dropdownContainer: {
+  dropdownOverlay: {
     position: "absolute",
-    top: 40,
-    right: 20,
+    top: 80,
+    right: 30,
+    zIndex: 50,
+    width: 180,
+  },
+  dropdownContainer: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    width: 160,
-    elevation: 20,
-    zIndex: 20,
+    borderRadius: 12,
+    elevation: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 5,
+    shadowRadius: 6,
+    padding: 8,
   },
   dropdownItem: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    backgroundColor: "#fff",
-    borderRadius: 8,
   },
   dropdownText: {
     fontSize: 15,
     color: "#333",
   },
   logoutButton: {
-    backgroundColor: "#f8d7da",
+    backgroundColor: "#ffe4e1",
+    borderRadius: 10,
   },
   logoutText: {
     color: "#a94442",
@@ -280,15 +289,13 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: 10,
+    left: 20,
+    right: 20,
     backgroundColor: "#eddff7",
-    padding: 10,
+    padding: 12,
     borderRadius: 20,
-    elevation: 3,
-    marginHorizontal: 20,
-    marginBottom: 10,
+    elevation: 5,
   },
   bottomButtonsContainer: {
     flexDirection: "row",
@@ -297,7 +304,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignItems: "center",
-    paddingVertical: 5,
   },
   iconContainer: {
     backgroundColor: "#b68def",
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
     color: "#333",
-    marginTop: 2,
+    marginTop: 3,
   },
 });
 

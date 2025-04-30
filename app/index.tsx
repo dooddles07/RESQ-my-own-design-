@@ -1,14 +1,23 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter(); // Use the router for navigation
+  const router = useRouter();
 
   const handleLogin = async () => {
     try {
@@ -19,11 +28,10 @@ const LoginScreen = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       const data = await res.json();
-  
+
       if (res.ok) {
-        // Save the username in AsyncStorage
         await AsyncStorage.setItem("username", username);
         alert("Login successful!");
         router.push("./Home");
@@ -35,57 +43,61 @@ const LoginScreen = () => {
       alert("Something went wrong.");
     }
   };
-  
 
-  const handleRegister = () => {
-    router.push("./Register");
-  };
-
-  const handleForgotpass = () => {
-    router.push("./Forgotpass");
-  };
+  const handleRegister = () => router.push("./Register");
+  const handleForgotpass = () => router.push("./Forgotpass");
 
   return (
-    <LinearGradient colors={["#ffffff", "#ffffff"]} style={styles.container}>
-      {/* Logo */}
-      <Image source={require("../assets/images/bg1.png")} style={styles.logo} />
+    <LinearGradient
+      colors={["#defcf9", "#cadefc", "#c3bef0", "#cca8e9"]}
+      style={styles.container}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1, width: "100%" }}
+      >
+        <ScrollView contentContainerStyle={styles.innerContainer}>
+          <Image
+            source={require("../assets/images/bg1.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-      {/* Input Fields */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Username"
-          placeholderTextColor="#aaa"
-          autoCapitalize="none"
-        />
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={username}
+              onChangeText={setUsername}
+              placeholder="Username"
+              placeholderTextColor="#666"
+              autoCapitalize="none"
+            />
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#666"
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          </View>
 
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          autoCapitalize="none"
-        />
-      </View>
+          <TouchableOpacity onPress={handleForgotpass}>
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
 
-      {/* Forgot Password */}
-      <TouchableOpacity onPress={handleForgotpass}>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
 
-      {/* Login Button */}
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-
-      {/* Register Link */}
-      <TouchableOpacity onPress={handleRegister}>
-        <Text style={styles.registerText}>Don't have an account? Register</Text>
-      </TouchableOpacity>
+          <TouchableOpacity onPress={handleRegister}>
+            <Text style={styles.registerText}>
+              Don't have an account? <Text style={styles.registerLink}>Register</Text>
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 };
@@ -93,57 +105,70 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  innerContainer: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    marginTop: 50,
+    padding: 24,
   },
   logo: {
-    width: 250,
-    height: 250,
-    marginBottom: 0,
+    width: 200,
+    height: 200,
+    marginBottom: 10,
   },
   inputContainer: {
-    marginTop: 15,
+    marginTop: 20,
     width: "100%",
-    alignItems: "center",
   },
   input: {
+    backgroundColor: "#fff",
+    borderColor: "#cca8e9",
     borderWidth: 1,
-    borderColor: "#ccc",
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 5,
-    width: "90%",
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    marginBottom: 15,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   button: {
-    backgroundColor: "#8c01c0",
-    padding: 10,
-    borderRadius: 8,
+    backgroundColor: "#cca8e9",
+    paddingVertical: 14,
+    borderRadius: 10,
     alignItems: "center",
-    width: "60%",
-    marginTop: 30,
-    marginBottom: 20,
+    width: "100%",
+    marginTop: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
   },
   forgotText: {
-    color: "#666",
+    color: "#6e6e6e",
     fontSize: 14,
     textDecorationLine: "underline",
-    marginTop: 10,
+    alignSelf: "flex-end",
+    marginTop: 8,
   },
   registerText: {
-    textAlign: "center",
-    color: "#b68def",
+    marginTop: 25,
+    color: "#444",
     fontSize: 14,
+    textAlign: "center",
+  },
+  registerLink: {
+    color: "#8b5cf6",
     fontWeight: "bold",
     textDecorationLine: "underline",
-    marginBottom: 50,
   },
 });
 

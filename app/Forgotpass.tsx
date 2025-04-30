@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+// ForgotPassword.tsx
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const router = useRouter();
 
   const handleResetPassword = () => {
     // Handle sending reset link logic here
-    alert('Password reset link has been sent to your email.');
-    router.replace('./');
+    alert("Password reset link has been sent to your email.");
+    router.replace("./");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Ionicons name="arrow-back" size={24} color="purple" />
+        <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
       <View style={styles.formContainer}>
@@ -49,64 +50,80 @@ const ForgotPassword = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f6f6f6',
+    backgroundColor: "#f6f6f6",
     paddingTop: 40,
     paddingHorizontal: 20,
   },
   backButton: {
     padding: 10,
+    marginTop: 20,
   },
   formContainer: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingVertical: 30,
+    backgroundColor: "#defcf9", // First color
+    borderRadius: 20,
+    elevation: 5,
+    shadowColor: "#ccc",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
   textContainer: {
-    marginBottom: 20,
+    marginBottom: 30,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 32,
-    fontWeight: '900',
-    color: '#8C00BF',
-    marginTop: 20,
+    fontWeight: "900",
+    color: "#8C00BF", // Primary color
+    marginBottom: 10,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginTop: 5,
-    marginRight: 10,
+    textAlign: "center",
   },
   inputContainer: {
     marginTop: 20,
-    marginRight: 95, // Adjusted margin for better spacing
-    paddingVertical: 10, // Added padding for better alignment
-    width: '80%', // Adjusted width of the input container
-    alignSelf: 'center', // Centers the input container horizontally
+    alignSelf: "center",
+    width: "80%", // Center the input container
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
-    width: '100%', // Ensures the input takes full width of the container
+    width: "100%", // Ensures the input takes full width of the container
+    shadowColor: "#ddd",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   button: {
-    backgroundColor: '#8C00BF',
+    backgroundColor: "#8C00BF", // Primary color
     paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
+    borderRadius: 10,
+    alignItems: "center",
     marginTop: 20,
-    width: '60%', // Adjusted width of the button
-   
+    width: "60%", // Adjusted width of the button
+    elevation: 3,
+    shadowColor: "#8C00BF",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
