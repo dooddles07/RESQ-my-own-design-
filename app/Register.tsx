@@ -31,7 +31,7 @@ const Register = () => {
 
       if (res.ok) {
         alert('Registered successfully!');
-        router.replace('./LoginScreen');
+        router.replace('./');
       } else {
         alert(data.message || 'Registration failed.');
       }

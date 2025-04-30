@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const MapScreen = () => {
+const Users = () => {
   return (
     <View>
-      <Text>MapScreen</Text>
+      <Text>Users</Text>
     </View>
   )
 }
 
-export default MapScreen
+export default Users
