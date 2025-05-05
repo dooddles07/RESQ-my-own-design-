@@ -9,15 +9,12 @@ import { errorHandler } from './middleware/errorHandler.js';
 const app = express();
 const PORT = process.env.PORT || 8081;
 
-// Middleware
-app.use(express.json());
-
+// CORS options
 const corsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'http://192.168.100.134:8081',
-      'http://192.168.100.134:10000',
-      'http://localhost:3000', // local frontend test
+      'http://localhost:8081',  // The URL of your React Native app during development
+      'http://192.168.100.134:8081', // If accessing from a mobile device on the same network
     ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -27,7 +24,9 @@ const corsOptions = {
   },
 };
 
-app.use(cors(corsOptions));
+// Middleware
+app.use(express.json());
+app.use(cors(corsOptions));  // Apply CORS middleware with your configuration
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
